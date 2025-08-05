@@ -2,6 +2,8 @@
 
 A space invaders style game built with Python and Pygame.
 
+![Alien Invasion Game](images/alien_invasion.PNG)
+
 ## About
 
 This game was created by following the "Alien Invasion" project from Eric Matthes' book "Python Crash Course". The core game mechanics, including ship movement, alien fleet creation, bullet firing, scoring system, and level progression were implemented as instructed in the book.
