@@ -39,7 +39,7 @@ class Scoreboard:
     def prep_high_score(self):
         """Turn the high score into a rendered image."""
         high_score = round(self.stats.high_score, -1)
-        high_score_str = f"{high_score:,}"
+        high_score_str = f"High Score: {high_score:,}"
         self.high_score_image = self.font.render(high_score_str, True,
                 self.text_color, self.settings.bg_color)
         
@@ -73,6 +73,25 @@ class Scoreboard:
         if self.stats.score > self.stats.high_score:
             self.stats.high_score = self.stats.score
             self.prep_high_score()
+            
+            # Update player's score in high scores list
+            player_found = False
+            for i, entry in enumerate(self.stats.high_scores):
+                if entry['name'] == self.stats.player_name:
+                    if self.stats.score > entry['score']:
+                        self.stats.high_scores[i]['score'] = self.stats.score
+                    player_found = True
+                    break
+            
+            if not player_found:
+                self.stats.high_scores.append({'name': self.stats.player_name, 'score': self.stats.score})
+                
+            # Sort high scores
+            self.stats.high_scores.sort(key=lambda x: x['score'], reverse=True)
+            
+            # Keep only top 10
+            if len(self.stats.high_scores) > 10:
+                self.stats.high_scores = self.stats.high_scores[:10]
 
     def show_score(self):
         """Draw scores, level, and ships to the screen"""

@@ -7,6 +7,8 @@ from settings import Settings
 from game_stats import GameStats
 from scoreboard import Scoreboard
 from button import Button
+from text_input import TextInput
+from rankings import Rankings
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
@@ -44,9 +46,16 @@ class AlienInvasion:
 
         # Start Alien Invasion in an inactive state.
         self.game_active = False
+        self.name_entered = False
 
         # Make the play button.
         self.play_button = Button(self, "Play")
+        
+        # Create text input for player name
+        self.name_input = TextInput(self, "Enter Your Name")
+        
+        # Create rankings display
+        self.rankings = Rankings(self)
 
     def run_game(self):
         """Start the main loop for the game"""
@@ -75,12 +84,19 @@ class AlienInvasion:
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 self._check_play_button(mouse_pos)
+                
+            # Handle name input if game is not active
+            if not self.game_active:
+                name = self.name_input.handle_event(event)
+                if name:
+                    self.stats.player_name = name
+                    self.name_entered = True
 
     def _check_play_button(self, mouse_pos):
         """Start a new game when the player clicks play."""
 
         button_clicked = self.play_button.rect.collidepoint(mouse_pos)
-        if button_clicked and not self.game_active:
+        if button_clicked and not self.game_active and self.name_entered:
             # Reset the game settings.
             self.settings.initialize_dynamic_settings()
 
@@ -252,9 +268,13 @@ class AlienInvasion:
         # Draw the score information.
         self.sb.show_score()
 
-        # Draw the button if the game is inactive
+        # Draw the play button and name input if the game is inactive.
         if not self.game_active:
             self.play_button.draw_button()
+            self.name_input.draw()
+            
+            # Draw rankings
+            self.rankings.draw()
 
         pygame.display.flip()  # Smooth animation of everything that is drawn to the screen
 
